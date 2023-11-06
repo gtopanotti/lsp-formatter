@@ -38,7 +38,7 @@
         "@vscode/test-electron": "^2.3.2"
     },
     "publisher": "guilhermetopanotti",
-    "icon": "logo.png",
+    "icon": "images/icon.png",
     "galleryBanner": {
       "color": "#030518",
       "theme": "dark"
