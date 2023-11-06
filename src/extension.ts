@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import { conferir_divergencias } from "./parsers/Validador";
 import { LSPParser } from "./parsers/lsp/LSPParser";
 import { unparse_global } from "./parsers/lsp/UnParser";
-import { get_text_edits } from "./get_text_edits";
+import { get_text_edits } from "./parsers/get_text_edits";
 
 export function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerDocumentFormattingEditProvider("lsp", {

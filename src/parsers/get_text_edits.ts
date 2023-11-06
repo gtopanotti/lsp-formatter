@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { Position } from "./parsers/Validador";
+import { Position } from "./Validador";
 
 export function get_text_edits(
     current_position: Position,
