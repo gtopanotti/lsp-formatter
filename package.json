@@ -1,8 +1,8 @@
 {
     "name": "lsp-formatter",
-    "displayName": "lsp-formatter",
+    "displayName": "LSP Formatter",
     "description": "Formatador da linguagem LSP",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "engines": {
         "vscode": "^1.80.0"
     },
