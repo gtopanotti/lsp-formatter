@@ -2,7 +2,7 @@
     "name": "lsp-formatter",
     "displayName": "LSP Formatter",
     "description": "Formatador da linguagem LSP",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "engines": {
         "vscode": "^1.80.0"
     },
@@ -14,7 +14,18 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
-        "commands": []
+        "languages": [
+            {
+                "id": "lsp",
+                "aliases": [
+                    "LSP"
+                ],
+                "extensions": [
+                    ".lsp",
+                    ".lspt"
+                ]
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
@@ -40,19 +51,19 @@
     "publisher": "guilhermetopanotti",
     "icon": "images/icon.png",
     "galleryBanner": {
-      "color": "#030518",
-      "theme": "dark"
+        "color": "#030518",
+        "theme": "dark"
     },
     "keywords": [
-      "lsp",
-      "liguagem-senior",
-      "senior"
+        "lsp",
+        "liguagem-senior",
+        "senior"
     ],
     "repository": {
-      "url": "https://github.com/gtopanotti/lsp-formatter"
+        "url": "https://github.com/gtopanotti/lsp-formatter"
     },
     "homepage": "https://github.com/gtopanotti/lsp-formatter",
     "bugs": {
-      "url": "https://github.com/gtopanotti/lsp-formatter/issues"
+        "url": "https://github.com/gtopanotti/lsp-formatter/issues"
     }
 }
