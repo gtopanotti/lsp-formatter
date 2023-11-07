@@ -2,7 +2,7 @@
 
 Uma extensão para formatar LSP (Linguagem Senior de Programação).
 
-Tabem identifica e formata commandos SQL dentro da função ExecSql e quando identifica a função SQL em um cursor;
+Tambem identifica e formata commandos SQL dentro da função ExecSql e quando identifica a função SQL em um cursor;
 
 ![screenshot 1](https://raw.githubusercontent.com/gtopanotti/lsp-formatter/master/images/format-1.gif)
 
