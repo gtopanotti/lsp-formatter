@@ -1,5 +1,5 @@
 {
-    "name": "lsp-support",
+    "name": "lsp-formatter",
     "displayName": "LSP - Suporte da Linguagem Senior",
     "description": "Suporte para a linguagem LSP",
     "version": "0.0.5",
