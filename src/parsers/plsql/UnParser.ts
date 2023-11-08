@@ -42,11 +42,6 @@ function get_tab(ast: PSQLAst = undefined) {
     return "\t".repeat(tab_level);
 }
 
-function get_breakline(ast: PSQLAst) {
-    // return "\n";
-    return "";
-}
-
 function unp_union(ast: PSQLAstUnion) {
     let retorno = "";
     retorno += ast.selects
@@ -88,10 +83,13 @@ function unp_select(ast: PSQLAstSelect) {
 
     retorno += unparse(ast.from);
 
-    if (ast?.join?.length)
+    if (ast?.join?.length) {
+        tab_incr();
         for (const current of ast.join) {
             retorno += unparse(current);
         }
+        tab_decr();
+    }
 
     if (ast?.where) {
         retorno += unparse(ast.where);
@@ -168,14 +166,16 @@ function unp_table_ref(ast: PSQLAstTableRef) {
 }
 
 function unp_join(ast: PSQLAstJoin) {
-    let retorno = "";
+    let retorno = "\n" + get_tab() + ast.join_type.toUpperCase() + " ";
 
-    retorno += ast.join_type + " ";
-
-    retorno += unparse(ast.table);
-
-    retorno += " ON ";
-    retorno += unparse(ast.on);
+    retorno += unparse(ast.table) + " ";
+    if (ast?.on) {
+        retorno += "ON\n";
+        tab_incr();
+        retorno += get_tab();
+        retorno += unparse(ast.on, ast);
+        tab_decr();
+    }
 
     return retorno;
 }
@@ -356,7 +356,7 @@ function unp_binary(ast: PSQLAstBin, ast_pai: PSQLAst = undefined): string {
     let space = " ";
     if (
         ast_pai &&
-        ast_pai.type == "where" &&
+        (ast_pai.type == "where" || ast_pai.type == "join") &&
         (ast.operator.toLowerCase() == "and" ||
             ast.operator.toLowerCase() == "or")
     )
