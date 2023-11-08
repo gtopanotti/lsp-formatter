@@ -1,0 +1,138 @@
+{
+    "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+    "name": "lsp",
+    "foldingStartMarker": "(?i)(\\{|\\binicio\\b[;]*)",
+
+    "foldingStopMarker": "(?i)(\\}|\\bfim\\b[;]*)",
+
+    "patterns": [
+        {
+            "include": "#expressions"
+        }
+    ],
+    "repository": {
+        "expressions": {
+            "patterns": [
+                {
+                    "include": "#strings"
+                },
+                {
+                    "include": "#comments"
+                },
+                { "include": "#number" },
+                { "include": "#bloco" },
+                { "include": "#loops" },
+                { "include": "#function" },
+                { "include": "#keywords" },
+                { "include": "#variable" }
+            ]
+        },
+        "bloco": {
+            "begin": "(?i)(\\{|\\binicio\\b[;]*)",
+            "end": "(?i)(\\}|\\bfim\\b[;]*)",
+            "beginCaptures": {
+                "1": {
+                    "name": "keyword.other.inicio.lsp"
+                }
+            },
+            "endCaptures": {
+                "1": {
+                    "name": "keyword.other.fim.lsp"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#expressions"
+                }
+            ]
+        },
+        "loops": {
+            "name": "keyword.control.lsp",
+            "match": "\\b(?i)(se|senao|enquanto|para)\\b"
+        },
+        "function": {
+            "begin": "\\b(\\w+)\\b\\s*\\(",
+            "end": "\\)",
+            "captures": {
+                "1": {
+                    "name": "entity.name.function.lsp"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#expressions"
+                }
+            ]
+        },
+        "keywords": {
+            "patterns": [
+                {
+                    "name": "support.type.lsp",
+                    "match": "(?i)\\b(definir)\\b\\s*\\b(\\w+(\\.\\w+)+)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.lsp"
+                        },
+                        "2": {
+                            "name": "support.type.lsp"
+                        }
+                    }
+                },
+                {
+                    "name": "support.type.lsp",
+                    "match": "(?i)\\b(definir)\\b\\s*\\b(funcao)\\b",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.other.lsp"
+                        },
+                        "2": {
+                            "name": "support.type.lsp"
+                        }
+                    }
+                },
+                {
+                    "name": "keyword.other.lsp",
+                    "match": "\\b(?i)(definir|funcao|end)\\b"
+                },
+                {
+                    "name": "support.type.lsp",
+                    "match": "\\b(?i)(numero|alfa|cursor|data|lista|tabela)\\b"
+                }
+            ]
+        },
+        "strings": {
+            "name": "string.quoted.double.lsp",
+            "begin": "\"",
+            "end": "\"",
+            "patterns": [
+                {
+                    "name": "constant.character.escape.lsp",
+                    "match": "\\\\."
+                }
+            ]
+        },
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.line.lsp",
+                    "begin": "@",
+                    "end": "@"
+                },
+                {
+                    "name": "comment.block.lsp",
+                    "begin": "/\\*",
+                    "end": "\\*/"
+                }
+            ]
+        },
+        "variable": {
+            "name": "variable.name.lsp",
+            "match": "\\b(\\w+)\\b"
+        },
+        "number": {
+            "name": "constant.numeric",
+            "match": "\\b(\\d+(\\.\\d+)?)\\b"
+        }
+    },
+    "scopeName": "text.lsp"
+}

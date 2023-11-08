@@ -1,17 +1,16 @@
 {
-    "name": "lsp-formatter",
-    "displayName": "LSP Formatter",
-    "description": "Formatador da linguagem LSP",
-    "version": "0.0.4",
+    "name": "lsp-support",
+    "displayName": "LSP - Suporte da Linguagem Senior",
+    "description": "Suporte para a linguagem LSP",
+    "version": "0.0.5",
     "engines": {
         "vscode": "^1.80.0"
     },
     "categories": [
+        "Programming Languages",
         "Formatters"
     ],
-    "activationEvents": [
-        "onLanguage:lsp"
-    ],
+    "activationEvents": [],
     "main": "./out/extension.js",
     "contributes": {
         "languages": [
@@ -23,7 +22,15 @@
                 "extensions": [
                     ".lsp",
                     ".lspt"
-                ]
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "lsp",
+                "scopeName": "text.lsp",
+                "path": "./syntaxes/lsp.tmLanguage.json"
             }
         ]
     },

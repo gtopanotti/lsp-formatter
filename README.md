@@ -1,6 +1,6 @@
-# lsp-formatter
+# LSP - Suporte para a Linguagem
 
-Uma extensão para formatar LSP (Linguagem Senior de Programação).
+Uma extensão com suporte a linguagem LSP (Linguagem Senior de Programação), contem colorização e formatação.
 
 Tambem identifica e formata commandos SQL dentro da função ExecSql e quando identifica a função SQL em um cursor;
 
