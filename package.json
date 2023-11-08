@@ -2,7 +2,7 @@
     "name": "lsp-formatter",
     "displayName": "LSP - Suporte da Linguagem Senior",
     "description": "Suporte para a linguagem LSP",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "engines": {
         "vscode": "^1.80.0"
     },
