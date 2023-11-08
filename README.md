@@ -1,4 +1,4 @@
-# LSP - Suporte para a Linguagem
+# LSP - Suporte para a Linguagem Senior
 
 Uma extensão com suporte a linguagem LSP (Linguagem Senior de Programação), contem colorização e formatação.
 
