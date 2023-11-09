@@ -248,6 +248,9 @@ function unp_para(ast: AstPara): string {
 
 function unp_call(ast: AstCall): string {
     let retorno = unparse(ast.func);
+    if (ast.func.type == "var" && ast.func.value.toLowerCase() == "execsqlex") {
+        next_sql_spaces = retorno.length + 2;
+    }
     retorno += "(";
     retorno += ast.args.map((v) => unparse(v)).join(", ");
     retorno += ")";

@@ -214,7 +214,12 @@ export class LSPParser {
         return left;
     }
 
-    private delimited<T>(start, stop, separator, parser: () => T): T[] {
+    private delimited<T>(
+        start,
+        stop,
+        separator,
+        parser: (() => T) | ((p1: any[]) => T)
+    ): T[] {
         let a = [],
             first = true;
 
@@ -226,7 +231,7 @@ export class LSPParser {
             if (first) first = false;
             else this.skip_punc(separator);
             if (this.is_punc(stop)) break;
-            a.push(parser());
+            a.push(parser(a));
         }
         if (this.is_punc(stop)) this.skip_punc(stop);
         return a;
@@ -235,11 +240,18 @@ export class LSPParser {
         return {
             type: "call",
             func: func,
-            args: this.delimited("(", ")", ",", () => this.parse_call_arg()),
+            args: this.delimited("(", ")", ",", (args) =>
+                this.parse_call_arg(func, args)
+            ),
         };
     }
-    private parse_call_arg() {
+    private parse_call_arg(func, args: any[]) {
         if (this.is_var_type()) return this.parse_var_type(this.token.next());
+        if (func && func.value.toLowerCase() == "execsqlex")
+            if (args && args.length == 0)
+                if (this.is_str())
+                    return this.parse_string(this.token.next(), true);
+
         return this.parse_expression();
     }
     private parse_cur_sql(func): AstCurSql {
@@ -803,5 +815,4 @@ export class LSPParser {
         }
         return retorno;
     }
-
 }
