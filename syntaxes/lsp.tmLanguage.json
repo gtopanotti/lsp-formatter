@@ -29,7 +29,7 @@
         },
         "bloco": {
             "begin": "(?i)(\\{|\\binicio\\b[;]*)",
-            "end": "(?i)(\\}|\\bfim\\b[;]*)",
+            "end": "(?i)(\\}|\\bfim\\b)[;]*",
             "beginCaptures": {
                 "1": {
                     "name": "keyword.other.inicio.lsp"
@@ -67,6 +67,26 @@
         "keywords": {
             "patterns": [
                 {
+                    "name": "support.function",
+                    "match": "\\b(?i)(abrir|fechar|gravar|gravarnl|lernl|ler|mensagem|atualizar|cancel|desfazertransacao|execsqlex|finalizartransacao|formatar|formatarn|iniciartransacao|alfaparaint|arqexiste|atualizabarraprogresso|caracterparaalfa|coddata|convertecodificacaostring|convertemascara|converteparamaiusculo|converteparaminusculo|convertetexto|copiaralfa|criararquivotemporario|datahoje|datahora|decoddata|deletaralfa|desencriptar|dividir|encriptar|excluirarquivotemporario|execprog|finalizabarraprogresso|formatardata|gerahash|gerarnonce|gerarpwddigest|gerasenha|geratoken|horaparaminuto|iniciabarraprogresso|intparaalfa|lerposicaoalfa|linhasarquivo|listaitem|listaquantidade|obtemidiomaativo|obterversaosistema|ocultabarraprogressorelatorio|posicaoalfa|removeexpressoesproibidas|restodivisao|retornavalorcfg|tamanhoalfa|trocastring|truncar|verificaabaativa|vrfabra|vrfabrn|gravarnleol|adicionadadosgrade|alteracontrole|alteravalorformula|cancelarrelatorio|carregaimagemcontrole|carregaimgcontrole|carregaimgvetorialcontrole|codigoespnivel|configurapontografico|criaview|datainicialfinal|datetodb|deletefieldsql|descamlista|detprimconector|insclausqlcampodireto|insclausqlfield|insclausqlfrom|insclausqlgroupby|insclausqlorderby|insclausqlwhere|insespalinhdireita|inssqlwheresimples|limpadadosgrade|limpadadosgrafico|listasecao|montarsqlhiscampo|montarsqlhiscamposeq|montarsqlhistorico|montarsqlhistoricoseq|ordenacaoselecionada|preenchepagina|proximapagina|retornacampoalfatabela|retornacamponumerotabela|saltarpagina|selecionaimpressora|substituifrom|truncadadosgrade|ultimoregistro|httpadicionaexcecaoproxy|httpalteraautenticacaoproxy|httpalteracabecalhorequisicao|httpalteracodifcaracpadrao|httpalteraconfiguracaoproxy|httpalteraconfiguracaossl|httpalteramostrarprogresso|httpalteraredirecionamento|httpdelete|httpdeletebody|httpdesabilitaerroresposta|httpdesabilitarcookies|httpdesabilitasni|httpdownload|httpexcluiexcecaoproxy|httpget|httphabilitaerroresposta|httphabilitarcookies|httphabilitasni|httpleautenticacaoproxy|httplecabecalhoresposta|httplecodigoresposta|httpleconfiguracaoproxy|httpleconfiguracaossl|httplecontadorexcecoesproxy|httpleexcecaoproxy|httplemostrarprogresso|httplimpaexcecoesproxy|httpnormalizaretorno|httpobjeto|httppatch|httppost|httpput|httpsetattachment|httpsetatimeout|sql_abrircursor|sql_bof|sql_criar|sql_definiralfa|sql_definirblob|sql_definirboleano|sql_definircomando|sql_definirdata|sql_definirflutuante|sql_definirinteiro|sql_destruir|sql_eof|sql_fecharcursor|sql_proximo|sql_retornaralfa|sql_retornarblob|sql_retornarboleano|sql_retornardata|sql_retornarflutuante|sql_retornarinteiro|sql_retornarsenulo|sql_usarabrangencia|sql_usarsqlsenior2|abrirtelasgi|abrirtelasgicarregandochave|atribuirfococomponentesgi|atualizartabela|compilaformulario|fecharformulariosgi|inserirvaloressgi|limparvalorcamposgi|ftpapagararquivo|ftpapagardiretorio|ftpconexao|ftpcriardiretorio|ftpdownload|ftplistaitem|ftplistaitemdetalhes|ftplistaitempermissoes|ftplistaquantidade|ftplistar|ftpmodoconexao|ftpmodoerro|ftpmodotransferencia|ftpproxy|ftprenomear|ftpsetasftp|ftpultimoerro|ftpupload)\\b"
+                },
+                {
+                    "name": "keyword.operator.lsp",
+                    "match": "\\b(?i)(e|ou)\\b"
+                },
+                {
+                    "match": "\\b(?i)(pare|continue)\\b;?",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.control.lsp"
+                        }
+                    }
+                },
+                {
+                    "name": "entity.name.function.lsp",
+                    "match": "(?i)\\b(execsql)\\b"
+                },
+                {
                     "name": "support.type.lsp",
                     "match": "(?i)\\b(definir)\\b\\s*\\b(\\w+(\\.\\w+)+)\\b",
                     "captures": {
@@ -92,11 +112,11 @@
                 },
                 {
                     "name": "keyword.other.lsp",
-                    "match": "\\b(?i)(definir|funcao|end)\\b"
+                    "match": "\\b(?i)(definir|funcao|end|retorna|inserir|regra|valret|valstr|vapara)\\b"
                 },
                 {
                     "name": "support.type.lsp",
-                    "match": "\\b(?i)(numero|alfa|cursor|data|lista|tabela)\\b"
+                    "match": "\\b(?i)(numero|alfa|cursor|data|lista|tabela|grid)\\b"
                 }
             ]
         },
