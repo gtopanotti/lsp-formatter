@@ -26,6 +26,7 @@ import {
     PSQLAstVarDot,
     PSQLAstWhen,
     PSQLAstWhere,
+    PSQLPostComment,
     PSQLPreComment,
 } from "./Types";
 var tab_level = 0;
@@ -311,8 +312,14 @@ function unp_str(ast: PSQLAstVal) {
 }
 
 function unp_precomment(ast: PSQLPreComment) {
-    let retorno = unparse(ast.comment);
+    let retorno = " " + unparse(ast.comment) + " ";
     retorno += unparse(ast.right);
+    return retorno;
+}
+
+function unp_postcomment(ast: PSQLPostComment) {
+    let retorno = unparse(ast.left);
+    retorno += " " + unparse(ast.comment) + " ";
     return retorno;
 }
 
@@ -390,6 +397,7 @@ function unparse_ast(ast: PSQLAst, ast_pai: PSQLAst): string {
         return unp_parenteses(ast, ast_pai);
     }
     if (ast.type == "precomment") return unp_precomment(ast);
+    else if (ast.type == "postcomment") return unp_postcomment(ast);
     else if (ast.type == "comment") return unp_comment(ast);
     else if (ast.type == "binary") return unp_binary(ast, ast_pai);
     else if (ast.type == "unary") return unp_unary(ast);

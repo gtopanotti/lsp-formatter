@@ -4,6 +4,12 @@ export interface PSQLPreComment {
     right: PSQLAst;
 }
 
+export interface PSQLPostComment {
+    type: "postcomment";
+    left: PSQLAst;
+    comment: PSQLAstComment;
+}
+
 export interface PSQLAstUnary {
     type: "unary";
     operator: string;
@@ -189,6 +195,7 @@ export type PSQLAst =
     | PSQLAstDot
     | PSQLAstVarDot
     | PSQLPreComment
+    | PSQLPostComment
     | PSQLAstBin
     | PSQLAstCall
     | PSQLAstTuple

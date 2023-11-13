@@ -602,7 +602,7 @@ export class PSQLParser {
 
     private parse_call(func): PSQLAstCall {
         if (!this.is_punc("(")) this.token.croak("Esperando (");
-        let symbol = this.precomment_symbol(func);
+        let symbol = this.pcomment_symbol(func);
         let args;
 
         if (this.is_agg_function(symbol)) {
@@ -662,15 +662,17 @@ export class PSQLParser {
         };
     }
 
-    private precomment_symbol(func) {
-        if (func.type != "precomment") return func;
-        else return this.precomment_symbol(func.right);
+    private pcomment_symbol(func) {
+        if (func.type == "precomment") return this.pcomment_symbol(func.right);
+        else if (func.type == "postcomment")
+            return this.pcomment_symbol(func.left);
+        else return func;
     }
 
     private maybe_union(left: PSQLAst): PSQLAst {
         if (
-            (this.precomment_symbol(left.type) == "select" ||
-                this.precomment_symbol(left.type) == "union") &&
+            (this.pcomment_symbol(left.type) == "select" ||
+                this.pcomment_symbol(left.type) == "union") &&
             this.is_kw("union")
         )
             return this.parse_union(left);
@@ -734,14 +736,27 @@ export class PSQLParser {
             }
         }
 
+        if (this.is_comment()) {
+            return this.maybe_call(() =>
+                this.maybe_binary(
+                    {
+                        type: "postcomment",
+                        comment: <PSQLAstComment>this.token.next(),
+                        left: left,
+                    },
+                    0
+                )
+            );
+        }
+
         return left;
     }
 
     private maybe_var_dot<T>(expr: () => T): T | PSQLAstVarDot {
         let expr_ = expr();
-        let last_symbol = this.precomment_symbol(expr_);
+        let last_symbol = this.pcomment_symbol(expr_);
         if (expr_["type"] == "var_dot")
-            last_symbol = this.precomment_symbol(
+            last_symbol = this.pcomment_symbol(
                 expr_["value"][expr_["value"].length - 1]
             );
 
@@ -756,7 +771,7 @@ export class PSQLParser {
 
     private maybe_call<T>(expr: () => T): T | PSQLAstCall {
         let expr_ = expr();
-        let last_symbol = this.precomment_symbol(expr_);
+        let last_symbol = this.pcomment_symbol(expr_);
         if (this.is_punc("(")) {
             if (last_symbol.type == "var" || last_symbol.type == "var_dot") {
                 return this.parse_call(expr_);
