@@ -335,6 +335,12 @@ function unp_call(ast: PSQLAstCall) {
     return unparse(ast.func) + unparse(ast.args, ast);
 }
 
+function unp__inserir(ast: PSQLAstCall) {
+    let retorno = "\n" + get_tab();
+    retorno += unp_call(ast);
+    return retorno;
+}
+
 function unp_tuple(ast: PSQLAstTuple, ast_pai: PSQLAst): string {
     let retorno = "";
 
@@ -396,7 +402,14 @@ function unparse_ast(ast: PSQLAst, ast_pai: PSQLAst): string {
         ast["parenteses"] = undefined;
         return unp_parenteses(ast, ast_pai);
     }
-    if (ast.type == "precomment") return unp_precomment(ast);
+    /* Função inserir */
+    if (
+        ast.type == "call" &&
+        ast.func.type == "var" &&
+        ast.func.value.toLowerCase() == "__inserir"
+    )
+        return unp__inserir(ast);
+    else if (ast.type == "precomment") return unp_precomment(ast);
     else if (ast.type == "postcomment") return unp_postcomment(ast);
     else if (ast.type == "comment") return unp_comment(ast);
     else if (ast.type == "binary") return unp_binary(ast, ast_pai);
