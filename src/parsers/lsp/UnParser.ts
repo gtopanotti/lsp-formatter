@@ -26,6 +26,21 @@ import {
     AstVarType,
 } from "./Types";
 
+class CurrentProg {
+    prog: any[] = [];
+    temDelimitador: boolean = false;
+    parentRef: CurrentProg | undefined;
+    constructor(parentRef: CurrentProg, delimitador?: string) {
+        this.parentRef = parentRef;
+        if (
+            delimitador &&
+            (delimitador?.toUpperCase() == "INICIO" || delimitador == "{")
+        ) {
+            this.temDelimitador = true;
+        }
+    }
+}
+
 const MIN_STR_LINE_SIZE = 100;
 
 var breakline_count = 0;
@@ -53,7 +68,7 @@ function get_delimitadores(delimitador: string): { ini: string; fim: string } {
     return { ini, fim };
 }
 
-function prog_semicolon(ast: Ast, current_prog: Ast[]) {
+function prog_semicolon(ast: Ast, current_prog: CurrentProg | undefined) {
     if (!ast || !ast.type) return "";
     else if (ast.type == "comment/") return "";
     else if (ast.type == "comment@") return "";
@@ -71,11 +86,11 @@ function prog_semicolon(ast: Ast, current_prog: Ast[]) {
     )
         return " =";
     else {
-        let last_comando = last_ast(current_prog, true);
+        let last_comando = last_ast(current_prog?.prog, true);
         if (
             ast.type == "prog" &&
             ast.delimitador == "{" &&
-            current_prog.length &&
+            current_prog.prog.length &&
             last_comando?.type == "definir" &&
             last_comando?.value?.var_type?.type == "var_type" &&
             last_comando?.value?.var_type?.value == "tabela"
@@ -86,11 +101,28 @@ function prog_semicolon(ast: Ast, current_prog: Ast[]) {
     }
 }
 
-function get_tab(ast: Ast = undefined, current_prog = undefined) {
+function get_tab(
+    ast: Ast = undefined,
+    current_prog: CurrentProg | undefined = undefined
+) {
     return "\t".repeat(tab_level);
 }
 
-function get_breakline(ast: Ast, current_prog) {
+function check_senao_se(ast: Ast, current_prog: CurrentProg | undefined) {
+    if (
+        ast.type == "se" &&
+        current_prog &&
+        current_prog.prog.length == 0 &&
+        !current_prog.temDelimitador &&
+        current_prog.parentRef
+    ) {
+        let last_parent_cmd = last_ast(current_prog.parentRef.prog, false, 0);
+        if (last_parent_cmd && last_parent_cmd.type == "senao") return true;
+    }
+    return false;
+}
+
+function get_breakline(ast: Ast, current_prog: CurrentProg | undefined) {
     let current_breakline_count = breakline_count;
     // * se for vazio continua incrementando a contagem de quebras até o proximo comando
     if (ast.type == "empty") {
@@ -103,8 +135,13 @@ function get_breakline(ast: Ast, current_prog) {
     else {
         /* Abaixo se supõe que é um comando em um prog */
 
+        //* Verifica se é um SE logo apos um SENAO
+        if (check_senao_se(ast, current_prog)) {
+            return "";
+        }
+
         // * o primeiro comando de um prog
-        if (!current_prog.length) return eol_char;
+        if (!current_prog.prog.length) return eol_char;
 
         // * Comment não quebra linha obrigatoriamente,
         if (
@@ -122,7 +159,7 @@ function get_breakline(ast: Ast, current_prog) {
         // * Prog sem delimitador não quebra a linha
         if (ast.type == "prog") return "";
 
-        let ultimo_comando = last_ast(current_prog, true);
+        let ultimo_comando = last_ast(current_prog.prog, true);
 
         // * Se o comando imediatamente acima é um destes, quebra a linha apenas
         if (["se", "senao", "enquanto", "para"].includes(ultimo_comando?.type))
@@ -137,7 +174,7 @@ function get_breakline(ast: Ast, current_prog) {
             return eol_char;
 
         // aguardando um senão
-        let penultimo_comando = last_ast(current_prog, true, 1);
+        let penultimo_comando = last_ast(current_prog.prog, true, 1);
         if (penultimo_comando?.type == "se" && penultimo_comando?.tem_senao)
             return eol_char;
 
@@ -146,7 +183,7 @@ function get_breakline(ast: Ast, current_prog) {
         /* Se é um assign na mesma linha de uma definição mantem na mesma linhas */
         if (
             ast.type == "assign" &&
-            last_ast(current_prog, false)?.type == "definir" &&
+            last_ast(current_prog.prog, false)?.type == "definir" &&
             current_breakline_count == 0
         )
             return " ";
@@ -179,12 +216,18 @@ function last_ast(val: Ast[], ignora_comentario, index_anterior = 0) {
         });
 }
 
-function unp_prog(ast: AstProg): string {
-    let current_prog = [];
+function unp_prog(ast: AstProg, parent_prog: CurrentProg | undefined): string {
+    let current_prog = new CurrentProg(parent_prog, ast.delimitador);
     let increase_tab = true;
+
     if (root_prog) {
         increase_tab = false;
         root_prog = false;
+    } else if (
+        ast.prog.length > 0 &&
+        check_senao_se(ast.prog[0], current_prog)
+    ) {
+        increase_tab = false;
     }
 
     let { ini, fim } = get_delimitadores(ast.delimitador);
@@ -194,7 +237,7 @@ function unp_prog(ast: AstProg): string {
         body +=
             unparse(current, current_prog) +
             prog_semicolon(current, current_prog);
-        if (current.type != "empty") current_prog.push(current);
+        if (current.type != "empty") current_prog.prog.push(current);
     }
     if (increase_tab) tab_level -= 1;
     breakline_count = 0;
@@ -388,24 +431,27 @@ function unp_kw_cmd(ast: AstKWCmd) {
     return capitalize(ast.value.toLowerCase());
 }
 
-function unp_parenteses(ast: Ast) {
-    return "(" + unparse(ast) + ")";
+function unp_parenteses(ast: Ast, current_prog: CurrentProg | undefined) {
+    return "(" + unparse(ast, current_prog) + ")";
 }
 
-function unparse(ast: Ast, current_prog = undefined): string {
+function unparse(
+    ast: Ast,
+    current_prog: CurrentProg | undefined = undefined
+): string {
     let breakline = get_breakline(ast, current_prog);
     let tab = "";
     if (breakline.indexOf(eol_char) > -1) tab = get_tab(ast, current_prog);
-    return breakline + tab + unparse_ast(ast);
+    return breakline + tab + unparse_ast(ast, current_prog);
 }
 
-function unparse_ast(ast: Ast): string {
+function unparse_ast(ast: Ast, current_prog: CurrentProg | undefined): string {
     if (ast["parenteses"] == true) {
         ast["parenteses"] = undefined;
-        return unp_parenteses(ast);
+        return unp_parenteses(ast, current_prog);
     }
 
-    if (ast.type == "prog") return unp_prog(ast);
+    if (ast.type == "prog") return unp_prog(ast, current_prog);
     else if (ast.type == "assign") return unp_assign(ast);
     else if (ast.type == "binary") return unp_binary(ast);
     else if (ast.type == "unary") return unp_unary(ast);
@@ -443,7 +489,7 @@ export function unparse_global(ast: Ast, eol: "\n" | "\r\n", tabsize) {
     next_sql_spaces = 0;
     global_tabsize = tabsize;
 
-    let retorno = unparse(ast);
+    let retorno = unparse(ast, new CurrentProg(undefined));
 
     while (
         retorno.startsWith("\r\n") ||
